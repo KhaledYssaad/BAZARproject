@@ -98,6 +98,7 @@ class _CartScreenState extends State<CartScreen> {
                       fontWeight: FontWeight.w500,
                       color: Colors.black54,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -115,7 +116,10 @@ class _CartScreenState extends State<CartScreen> {
                       child: Column(
                         children: [
                           for (var book in books) ...[
-                            FavCartBook(book: book, isCart: true),
+                            FavCartBook(
+                              book: book,
+                              isCart: true,
+                            ),
                             const SizedBox(height: 12),
                           ],
                         ],
@@ -131,14 +135,14 @@ class _CartScreenState extends State<CartScreen> {
                       widthFactor: 1.0,
                       child: FilledButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              AppColors.primaryPurple),
-                          shape: MaterialStateProperty.all(
+                          backgroundColor:
+                              WidgetStateProperty.all(AppColors.primaryPurple),
+                          shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(48),
                             ),
                           ),
-                          minimumSize: MaterialStateProperty.all(
+                          minimumSize: WidgetStateProperty.all(
                               const Size(double.infinity, 48)),
                         ),
                         onPressed: () {
@@ -156,6 +160,8 @@ class _CartScreenState extends State<CartScreen> {
                             height: 1.4,
                             color: Colors.white,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                     ),
