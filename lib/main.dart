@@ -1,3 +1,14 @@
+import 'package:app/home/profilescreen/account_screen.dart';
+import 'package:app/home/profilescreen/adress_screen.dart';
+import 'package:app/home/profilescreen/favorite_screen.dart';
+import 'package:app/home/profilescreen/help_center.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+import 'providers/radio_provider.dart';
+import 'package:app/auth/auth_gate.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:app/forgotpass/new_password.dart';
 import 'package:app/forgotpass/reset_password.dart';
 import 'package:app/home/cartscreen/cart_screen.dart';
@@ -11,31 +22,18 @@ import 'package:app/forgotpass/forgot_page.dart';
 import 'package:app/login&singup/login.dart';
 import 'package:app/login&singup/signup.dart';
 import 'package:app/login&singup/verfication_email.dart';
-import 'package:app/home/profilescreen/adress_screen.dart';
-import 'package:app/home/profilescreen/favorite_screen.dart';
-import 'package:app/home/profilescreen/help_center.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:provider/provider.dart';
-import 'providers/radio_provider.dart';
-import 'package:app/auth/auth_gate.dart';
-import 'package:app/home/profilescreen/account_screen.dart';
-import "package:flutter_local_notifications/flutter_local_notifications.dart";
 
-// import 'package:timezone/standalone.dart';
-// import 'package:timezone/timezone.dart';
-// import 'package:timezone/data/latest.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env before accessing env variables
+  await dotenv.load(fileName: ".env");
+
   await Supabase.initialize(
-    anonKey: dotenv.env["SUPABASE_KEY"]!,
     url: "https://jclpqcrxasheoidmdpkz.supabase.co",
+    anonKey: dotenv.env["SUPABASE_KEY"]!,
   );
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+
   runApp(
     MultiProvider(
       providers: [
@@ -59,19 +57,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    init();
     super.initState();
+    initNotifications();
   }
 
-  Future<void> init() async {
-    // initializeTimeZone();
-    // setLocalLocation(getLocation("Africa/Algiers"));
+  Future<void> initNotifications() async {
     const androidSettings =
         AndroidInitializationSettings("@mipmap/launcher_icon");
-    const DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings();
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: androidSettings, iOS: iosSettings);
+    const iosSettings = DarwinInitializationSettings();
+    const initializationSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
     await notificationsPlugin.initialize(initializationSettings);
   }
 
@@ -101,11 +98,11 @@ class _MyAppState extends State<MyApp> {
         "/author/searchauthors": (context) => const SearchAuthorScreen(),
         "/category": (context) => const CategoryPage(),
         "/category/search": (context) => const SearchScreen(),
-        '/profile/account': (context) => const AccountScreen(),
-        '/profile/address': (context) => AddressScreen(),
-        '/profile/favorites': (context) => const FavoriteScreen(),
-        '/profile/cart': (context) => const CartScreen(),
-        '/profile/help': (context) => const HelpCenter(),
+        '/home/profile/account': (context) => const AccountScreen(),
+        '/home/profile/address': (context) => AddressScreen(),
+        '/home/profile/favorites': (context) => const FavoriteScreen(),
+        '/home/profile/cart': (context) => const CartScreen(),
+        '/home/profile/help': (context) => const HelpCenter(),
       },
     );
   }

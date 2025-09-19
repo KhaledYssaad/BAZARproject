@@ -104,44 +104,48 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
     }
   }
 
-  Future<void> _toggleFavorites(bool favorite, String title) async {
+  Future<void> _toggleFavorites(bool favorite, Book book) async {
     try {
       final authService = AuthService();
-      String? id = authService.getCurrentUserId();
-      if (id == null) throw Exception("No user logged in");
+      final userId = authService.getCurrentUserId();
+      if (userId == null) throw Exception("No user logged in");
 
-      final user = await authService.getUserProfile(id);
+      final user = await authService.getUserProfile(userId);
       if (user == null) throw Exception("User profile not found");
 
-      List<dynamic> favoritesData = [];
-      if (user['favorites'] != null) {
-        if (user['favorites'] is List) {
-          favoritesData = List.from(user['favorites']);
-        } else {
-          throw Exception("Favorites is not a valid JSON array");
-        }
+      List<Map<String, dynamic>> favoritesData = [];
+      if (user['favorites'] is List) {
+        favoritesData = List<Map<String, dynamic>>.from(user['favorites']);
       }
 
       if (favorite) {
-        bool alreadyExists = favoritesData.any((f) => f['title'] == title);
+        bool alreadyExists = favoritesData.any((f) => f['title'] == book.title);
         if (!alreadyExists) {
-          favoritesData.add({"title": title});
+          favoritesData.add({
+            "title": book.title,
+            "author": book.author,
+            "pic": widget.bookCoverUrl,
+          });
+          await authService.updateProfile(favorites: favoritesData);
           showNotification(
             id: 14,
             title: "Added to Favorites",
-            body: "\"$title\" has been added to your favorites.",
+            body: "\"${book.title}\" has been added to your favorites.",
           );
         }
       } else {
-        favoritesData.removeWhere((f) => f['title'] == title);
+        favoritesData.removeWhere((f) => f['title'] == book.title);
+        await authService.updateProfile(favorites: favoritesData);
         showNotification(
           id: 15,
           title: "Removed from Favorites",
-          body: "\"$title\" has been removed from your favorites.",
+          body: "\"${book.title}\" has been removed from your favorites.",
         );
       }
 
-      await authService.updateProfile(favorites: favoritesData);
+      setState(() {
+        isFavorite = favorite;
+      });
     } catch (e) {
       showNotification(
         id: 16,
@@ -241,7 +245,7 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
                                 setState(() {
                                   isFavorite = !isFavorite;
                                 });
-                                _toggleFavorites(isFavorite, details!.title);
+                                _toggleFavorites(isFavorite, details!);
                               },
                               icon: Icon(
                                 isFavorite

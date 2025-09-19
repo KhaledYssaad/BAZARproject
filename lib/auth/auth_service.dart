@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
@@ -127,26 +130,45 @@ class AuthService {
     return res.user;
   }
 
-  Future<String?> pickAndUploadProfilePicWeb() async {
-    final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowedExtensions: ["jpg", "png", "jpeg"],
-        allowMultiple: false);
+  Future<String?> pickAndUploadProfilePic() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ["jpg", "jpeg", "png"],
+        allowMultiple: false,
+        withData: true,
+      );
 
-    if (result == null) return null;
+      if (result == null || result.files.isEmpty) return null;
 
-    final fileBytes = result.files.first.bytes;
-    final fileName = result.files.first.name;
+      final file = result.files.first;
+      final fileName = file.name;
 
-    await Supabase.instance.client.storage.from('avatars').uploadBinary(
-        'public/$fileName', fileBytes!,
-        fileOptions: FileOptions(upsert: true));
+      if (kIsWeb) {
+        final fileBytes = file.bytes;
+        if (fileBytes == null) return null;
 
-    final url = Supabase.instance.client.storage
-        .from('avatars')
-        .getPublicUrl('public/$fileName');
+        await Supabase.instance.client.storage.from('avatars').uploadBinary(
+            'public/$fileName', fileBytes,
+            fileOptions: FileOptions(upsert: true));
+      } else {
+        final path = file.path;
+        if (path == null) return null;
 
-    return (url);
+        final fileObj = File(path);
+        await Supabase.instance.client.storage.from('avatars').upload(
+            'public/$fileName', fileObj,
+            fileOptions: FileOptions(upsert: true));
+      }
+
+      final url = Supabase.instance.client.storage
+          .from('avatars')
+          .getPublicUrl('public/$fileName');
+      return url;
+    } catch (e) {
+      debugPrint('Upload failed: $e');
+      return null;
+    }
   }
 
   User? getCurrentUser() => _supabase.auth.currentUser;

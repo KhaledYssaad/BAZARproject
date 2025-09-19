@@ -33,6 +33,7 @@ dependencies:
   firebase_core: ^4.1.0
   timezone: ^0.10.1
   flutter_dotenv: ^6.0.0
+  permission_handler: ^12.0.1
 
 dev_dependencies:
   flutter_test:
@@ -51,6 +52,7 @@ flutter:
     - assets/images/Apple.png
     - assets/images/Google.png
     - assets/images/Group.png
+    - .env
 
   fonts:
     - family: Open Sans

@@ -90,7 +90,7 @@
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-   </ProfileAction>
+   </home/profileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
    </AnalyzeAction>

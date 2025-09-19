@@ -29,19 +29,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final items = [
-      {"icon": Icons.person, "text": "My Account", "route": "/profile/account"},
+      {
+        "icon": Icons.person,
+        "text": "My Account",
+        "route": "/home/profile/account"
+      },
       {
         "icon": Icons.location_on,
         "text": "Address",
-        "route": "/profile/address"
+        "route": "/home/profile/address"
       },
       {
         "icon": Icons.favorite,
         "text": "Favorites",
-        "route": "/profile/favorites"
+        "route": "/home/profile/favorites"
       },
-      {"icon": Icons.shopping_cart, "text": "Cart", "route": "/profile/cart"},
-      {"icon": Icons.help, "text": "Help Center", "route": "/profile/help"},
+      {
+        "icon": Icons.shopping_cart,
+        "text": "Cart",
+        "route": "/home/profile/cart"
+      },
+      {
+        "icon": Icons.help,
+        "text": "Help Center",
+        "route": "/home/profile/help"
+      },
     ];
 
     final displayName = profile?['display_name'] ?? "User Name";

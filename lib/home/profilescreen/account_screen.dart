@@ -48,20 +48,53 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Future<void> _changeProfilePicture() async {
     try {
-      final result = await _authService.pickAndUploadProfilePicWeb();
-      if (result == null) return;
-      _profilePicUrl = result;
+      final result = await _authService.pickAndUploadProfilePic();
+      if (result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No image selected"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+      setState(() {
+        _profilePicUrl = result;
+      });
       showNotification(
         id: 1,
         title: "Profile Updated",
         body: "Profile picture updated successfully.",
       );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Profile picture updated successfully!"),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     } catch (e) {
       showNotification(
         id: 2,
         title: "Update Failed",
         body: "Failed to update profile picture. Please try again.",
       );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to update profile picture: ${e.toString()}"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: "Retry",
+              textColor: Colors.white,
+              onPressed: () => _changeProfilePicture(),
+            ),
+          ),
+        );
+      }
     }
   }
 
