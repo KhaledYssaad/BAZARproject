@@ -1,6 +1,8 @@
 # BAZAR book store
 
-this is the final project of MasterClass it was hart acctually but a good in the same tima and thank u :)
+This is the final project of MasterClass. It was hard, but at the same time, very rewarding. Thank you :)
+
+This project is entirely dynamic, using Sanity.
 
 ## Getting Started
 
