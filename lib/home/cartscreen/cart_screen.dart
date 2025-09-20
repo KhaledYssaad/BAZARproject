@@ -41,35 +41,32 @@ class _CartScreenState extends State<CartScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
-          automaticallyImplyLeading: false,
-          title: Stack(
-            alignment: Alignment.center,
-            children: const [
-              Center(
-                child: Text(
-                  "My Cart",
-                  style: TextStyle(
-                    fontFamily: "Open Sans",
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                child: NotificationButton(),
-              ),
-            ],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "My Cart",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
           ),
         ),
+        centerTitle: true,
+        leading: const Padding(
+          padding: EdgeInsets.only(left: 16.0),
+          child: Icon(Icons.join_left, color: Colors.white),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: NotificationButton(),
+          ),
+        ],
+        toolbarHeight: 60,
       ),
       body: FutureBuilder<List<dynamic>>(
         future: _fetchCartBooks(),

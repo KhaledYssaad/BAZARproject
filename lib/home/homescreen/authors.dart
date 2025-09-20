@@ -19,10 +19,10 @@ class _AuthorsState extends State<Authors> {
   @override
   void initState() {
     super.initState();
-    _fetchauthors();
+    _fetchAuthors();
   }
 
-  Future<void> _fetchauthors() async {
+  Future<void> _fetchAuthors() async {
     try {
       final fetchedAuthors = await authorService.fetchAuthors();
       setState(() {
@@ -31,6 +31,9 @@ class _AuthorsState extends State<Authors> {
       });
     } catch (e) {
       setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching authors: $e")),
+      );
     }
   }
 
@@ -71,9 +74,9 @@ class _AuthorsState extends State<Authors> {
         SizedBox(
           height: 165,
           child: isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : authors.isEmpty
-                  ? Center(child: Text("No authors found"))
+                  ? const Center(child: Text("No authors found"))
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -102,9 +105,17 @@ class _AuthorsState extends State<Authors> {
                               children: [
                                 CircleAvatar(
                                   radius: 51,
-                                  backgroundImage:
-                                      NetworkImage(author.imageUrl),
+                                  backgroundImage: author.imageUrl.isNotEmpty
+                                      ? NetworkImage(author.imageUrl)
+                                      : null,
                                   backgroundColor: Colors.grey[200],
+                                  child: author.imageUrl.isEmpty
+                                      ? const Icon(
+                                          Icons.person,
+                                          size: 40,
+                                          color: Colors.grey,
+                                        )
+                                      : null,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -116,19 +127,19 @@ class _AuthorsState extends State<Authors> {
                                     fontWeight: FontWeight.w700,
                                     fontSize: 16,
                                     height: 1.5,
-                                    letterSpacing: 0,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   author.role,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     fontFamily: 'Roboto',
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14,
                                     height: 1.5,
                                     color: AppColors.primaryGrey,
-                                    letterSpacing: 0,
                                   ),
                                 ),
                               ],

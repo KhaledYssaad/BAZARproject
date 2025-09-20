@@ -19,6 +19,19 @@ class _CategoryPageState extends State<CategoryPage> {
   List<Book> books = [];
   bool isLoading = true;
 
+  final List<String> categories = [
+    "All",
+    "Fantasy",
+    "Adventure",
+    "Young Adult",
+    "Romance",
+    "Self-Help",
+    "Science",
+    "Mystery",
+    "History",
+    "Biography"
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -27,14 +40,16 @@ class _CategoryPageState extends State<CategoryPage> {
 
   Future<void> _fetchBooks(String category) async {
     try {
-      final fetchedBooks = await apiService.searchBooks(category);
-
+      final fetchedBooks =
+          await apiService.searchBooks(category == "All" ? "new" : category);
       setState(() {
         books = fetchedBooks.toList();
         isLoading = false;
       });
     } catch (e) {
       setState(() => isLoading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error fetching books: $e")));
     }
   }
 
@@ -44,55 +59,38 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> categories = [
-      "All",
-      "Novels",
-      "Self Love",
-      "Science",
-      "Romantic",
-      "Fantasy",
-      "Adventure",
-      "Mystery",
-      "History",
-      "Biography"
-    ];
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            shadowColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            flexibleSpace: Container(
-              color: Colors.white,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: _tosearch,
-                    icon: const Icon(Icons.search_rounded, color: Colors.black),
-                  ),
-                  const Text(
-                    "Category",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black),
-                  ),
-                  NotificationButton()
-                ],
-              ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          title: const Text(
+            "Categories",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
             ),
           ),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: _tosearch,
+            icon: const Icon(Icons.search_rounded, color: Colors.black),
+          ),
+          actions: const [
+            Padding(
+              padding: EdgeInsets.only(right: 16.0),
+              child: NotificationButton(),
+            ),
+          ],
+          toolbarHeight: 60,
         ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
                 SizedBox(
@@ -109,9 +107,7 @@ class _CategoryPageState extends State<CategoryPage> {
                             selectedCategory = category;
                             isLoading = true;
                           });
-                          _fetchBooks(selectedCategory == "All"
-                              ? "new"
-                              : selectedCategory);
+                          _fetchBooks(selectedCategory);
                         },
                         child: Container(
                           margin: const EdgeInsets.only(right: 12),
@@ -135,14 +131,14 @@ class _CategoryPageState extends State<CategoryPage> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   height: MediaQuery.of(context).size.height,
                   child: isLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : books.isEmpty
-                          ? Center(child: Text("No books found"))
+                          ? const Center(child: Text("No books found"))
                           : GridView.builder(
-                              physics: ScrollPhysics(),
+                              physics: const ScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: books.length,
                               gridDelegate:
@@ -150,7 +146,6 @@ class _CategoryPageState extends State<CategoryPage> {
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 16,
                                 mainAxisExtent: 210,
-                                childAspectRatio: 1,
                               ),
                               itemBuilder: (context, index) {
                                 final book = books[index];
@@ -172,14 +167,13 @@ class _CategoryPageState extends State<CategoryPage> {
                                       builder: (context) =>
                                           BookDetailBottomSheet(
                                         title: book.title,
-                                        bookCoverUrl: book.bookCoverUrl,
                                       ),
                                     );
                                   },
                                   child: SizedBox(
                                     width: itemWidth,
                                     child: BookCoverWidget(
-                                      bookCoverUrl: book.bookCoverUrl,
+                                      bookCoverUrl: book.cover,
                                       title: book.title,
                                       author: book.author,
                                       width: itemWidth,

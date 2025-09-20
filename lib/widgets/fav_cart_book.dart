@@ -105,7 +105,6 @@ class _FavCartBookState extends State<FavCartBook> {
           ),
           builder: (_) => BookDetailBottomSheet(
             title: title,
-            bookCoverUrl: pic,
           ),
         );
       },

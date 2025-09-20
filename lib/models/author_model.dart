@@ -1,6 +1,5 @@
 class Author {
   final String name;
-  final String olid;
   final String topWork;
   final String birthDate;
   final String deathDate;
@@ -11,7 +10,6 @@ class Author {
 
   Author({
     required this.name,
-    required this.olid,
     required this.topWork,
     required this.birthDate,
     required this.deathDate,

@@ -27,14 +27,15 @@ class _TopOfWeekState extends State<TopOfWeek> {
 
   Future<void> _fetchBooks() async {
     try {
-      final fetchedBooks = await apiService.searchBooks("new");
-
+      final fetchedBooks = await apiService.searchBooks("");
       setState(() {
         books = fetchedBooks.take(8).toList();
         isLoading = false;
       });
     } catch (e) {
-      setState(() => isLoading = false);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -92,7 +93,7 @@ class _TopOfWeekState extends State<TopOfWeek> {
                               margin:
                                   const EdgeInsets.only(right: 8, bottom: 8),
                               child: BookCoverWidget(
-                                bookCoverUrl: book.bookCoverUrl,
+                                bookCoverUrl: book.cover,
                                 title: book.title,
                                 author: book.author,
                                 width: 127,
@@ -108,8 +109,8 @@ class _TopOfWeekState extends State<TopOfWeek> {
                                       top: Radius.circular(20)),
                                 ),
                                 builder: (context) => BookDetailBottomSheet(
-                                    title: book.title,
-                                    bookCoverUrl: book.bookCoverUrl),
+                                  title: book.title,
+                                ),
                               );
                             });
                       },

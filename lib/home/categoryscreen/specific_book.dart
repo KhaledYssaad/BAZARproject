@@ -1,26 +1,23 @@
-import 'package:app/apiServices/notification_service.dart';
 import 'package:app/auth/auth_service.dart';
 import 'package:app/widgets/author_bottom_sheet.dart';
 import 'package:app/widgets/stars.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/colors.dart';
-import 'package:app/apiServices/book_details_service.dart';
-import 'package:app/models/detailed_book.dart';
+import 'package:app/models/book_model.dart';
+import 'package:app/apiServices/library_service.dart';
+
 import 'package:readmore/readmore.dart';
 
 class BookDetailBottomSheet extends StatefulWidget {
   final String title;
-  final String bookCoverUrl;
 
-  const BookDetailBottomSheet(
-      {super.key, required this.title, required this.bookCoverUrl});
+  const BookDetailBottomSheet({super.key, required this.title});
 
   @override
   State<BookDetailBottomSheet> createState() => _BookDetailBottomSheetState();
 }
 
 class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
-  final bookDetailsService = BookDetailsService();
   Book? details;
   bool isLoading = true;
   bool hasError = false;
@@ -141,7 +138,7 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
           favoritesData.add({
             "title": book.title,
             "author": book.author,
-            "pic": widget.bookCoverUrl,
+            "pic": book.cover,
           });
           await authService.updateProfile(favorites: favoritesData);
 
@@ -200,10 +197,12 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
 
   Future<void> _getBookDetails() async {
     try {
-      final fetchedBook =
-          await bookDetailsService.getBookDetailsByTitle(widget.title);
-      if (fetchedBook == null) throw Exception("Book not found");
+      final libraryService = LibraryService();
+      final results = await libraryService.searchBooksByTitle(widget.title);
 
+      if (results.isEmpty) throw Exception("Book not found");
+
+      final fetchedBook = results.first;
       final fav = await _checkIfFavorite(fetchedBook.title);
 
       setState(() {
@@ -261,7 +260,7 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
                             child: Image.network(
-                              widget.bookCoverUrl,
+                              details!.cover,
                               height: 313,
                               width: 237,
                               fit: BoxFit.cover,
@@ -403,14 +402,40 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
                           ],
                         ),
                         const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              "People rated this: ${details!.ratingCount}",
+                              style: const TextStyle(
+                                fontFamily: "Roboto",
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                height: 1.4,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              "Num of Pages: ${details!.pages}",
+                              style: const TextStyle(
+                                fontFamily: "Roboto",
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                height: 1.4,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                         Text(
-                          "People rated this: ${details!.ratingCount}",
+                          "${details!.price} DA",
                           style: const TextStyle(
                             fontFamily: "Roboto",
                             fontWeight: FontWeight.w500,
-                            fontSize: 13,
+                            fontSize: 16,
                             height: 1.4,
-                            color: Colors.black54,
+                            color: AppColors.primaryPurple,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -427,7 +452,7 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
                                 const Size(double.infinity, 48)),
                           ),
                           onPressed: () {
-                            _addToCart(details!.title, widget.bookCoverUrl,
+                            _addToCart(details!.title, details!.cover,
                                 details!.author);
                             Navigator.of(context).pop({});
                           },

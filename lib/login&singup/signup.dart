@@ -76,7 +76,7 @@ class _SignupState extends State<Signup> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Stack(
+      body: Column(
         children: [
           SingleChildScrollView(
             child: Column(
@@ -208,46 +208,41 @@ class _SignupState extends State<Signup> {
               ],
             ),
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  "By clicking Register, you agree to our ",
+          Spacer(),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "By clicking Register, you agree to our ",
+                style: TextStyle(
+                  fontFamily: "Roboto",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  height: 1.5,
+                  color: Color(0xFFA6A6A6),
+                ),
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+                  minimumSize: WidgetStateProperty.all(Size.zero),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                ),
+                onPressed: _signup,
+                child: const Text(
+                  "Terms and Data Policy.",
                   style: TextStyle(
                     fontFamily: "Roboto",
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
                     height: 1.5,
-                    color: Color(0xFFA6A6A6),
+                    color: AppColors.primaryPurple,
                   ),
                 ),
-                TextButton(
-                  style: ButtonStyle(
-                    padding:
-                        WidgetStateProperty.all<EdgeInsets>(EdgeInsets.zero),
-                    minimumSize: WidgetStateProperty.all(Size.zero),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  ),
-                  onPressed: _signup,
-                  child: const Text(
-                    "Terms and Data Policy.",
-                    style: TextStyle(
-                      fontFamily: "Roboto",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      height: 1.5,
-                      color: AppColors.primaryPurple,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

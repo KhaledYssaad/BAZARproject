@@ -1,108 +1,71 @@
 import 'dart:convert';
-import 'package:app/models/author_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:app/models/author_model.dart';
 
 class AuthorService {
-  Future<Author?> fetchAuthorByName(String? query) async {
-    if (query == null || query.trim().isEmpty) return null;
-    query = query.replaceAll(" ", "+");
-    final encodedQuery = Uri.encodeQueryComponent(query.trim());
-    final url = Uri.parse(
-        'https://openlibrary.org/search/authors.json?q=$encodedQuery');
+  final String baseUrl =
+      "https://exvg489e.api.sanity.io/v2023-05-03/data/query/production";
+
+  Future<List<Author>> fetchAuthors({String? nameQuery}) async {
+    final query = nameQuery == null || nameQuery.isEmpty
+        ? '*[_type == "author"]{name, topWork, birthDate, deathDate, bio, role, ratingsSortable, imageUrl}'
+        : '*[_type == "author" && name match "*$nameQuery*"]{name, topWork, birthDate, deathDate, bio, role, ratingsSortable, imageUrl}';
+
+    final encodedQuery = Uri.encodeQueryComponent(query);
+    final url = Uri.parse('$baseUrl?query=$encodedQuery');
+
     final response = await http.get(url);
 
-    if (response.statusCode != 200) return null;
-
-    final data = json.decode(response.body);
-    final docs = data['docs'] as List<dynamic>? ?? [];
-
-    if (docs.isEmpty) return null;
-
-    final doc = docs.first;
-    String role = 'Author';
-    final olid = (doc['key'] as String).split('/').last;
-
-    final detailUrl = Uri.parse('https://openlibrary.org/authors/$olid.json');
-    final detailResponse = await http.get(detailUrl);
-
-    String bio = 'No description available';
-    if (detailResponse.statusCode == 200) {
-      final detailData = json.decode(detailResponse.body);
-      if (detailData['bio'] != null) {
-        if (detailData['bio'] is String) {
-          bio = detailData['bio'];
-        } else if (detailData['bio'] is Map &&
-            detailData['bio']['value'] != null) {
-          bio = detailData['bio']['value'];
-        }
-      }
-      if (detailData['subjects'] != null &&
-          detailData['subjects'] is List &&
-          (detailData['subjects'] as List).isNotEmpty) {
-        role = (detailData['subjects'] as List).first.toString();
-      }
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch authors: ${response.body}");
     }
 
-    final imageUrl = 'https://covers.openlibrary.org/a/olid/$olid-L.jpg';
-    final ratingsSortable = (doc['ratings_sortable'] ?? 0.0).toDouble();
+    final data = json.decode(response.body);
+    final results = data['result'] as List<dynamic>? ?? [];
 
-    return Author(
-      name: doc['name'] ?? 'Unknown',
-      olid: olid,
-      topWork: doc['top_work'] ?? 'Unknown',
-      birthDate: doc['birth_date'] ?? 'Unknown',
-      deathDate: doc['death_date'] ?? 'Unknown',
-      bio: bio,
-      imageUrl: imageUrl,
-      role: role,
-      ratingsSortable: ratingsSortable,
+    return results.map(_parseAuthor).toList();
+  }
+
+  String normalize(String s) =>
+      s.toLowerCase().replaceAll(RegExp(r'[\s\.]'), '');
+
+  Future<Author?> fetchAuthorByName(String name) async {
+    final normalizedQuery = normalize(name);
+    final authors = await fetchAuthors();
+
+    return authors.firstWhere(
+      (author) => normalize(author.name) == normalizedQuery,
     );
   }
 
-  Future<List<Author>> fetchAuthors({
-    int page = 1,
-    double minRatingSortable = 3.0,
-    int minWorks = 5,
-  }) async {
-    List<String> queries = ['j', "a", 'm', 'e', 'i', 'o', 'u', 's'];
-    List<Author> authors = [];
+  Author _parseAuthor(dynamic doc) {
+    String imageUrl = 'https://via.placeholder.com/150x200?text=No+Image';
+    final imageField = doc['imageUrl'];
 
-    for (var q in queries) {
-      final url = Uri.parse(
-          'https://openlibrary.org/search/authors.json?q=${(q)}&page=$page');
-      final response = await http.get(url);
-
-      if (response.statusCode != 200) continue;
-
-      final data = json.decode(response.body);
-      final docs = data['docs'] as List<dynamic>? ?? [];
-
-      final filteredDocs = docs.where((doc) {
-        final workCount = doc['work_count'] ?? 0;
-        final ratingSortable = (doc['ratings_sortable'] ?? 0.0) as double;
-        return workCount >= minWorks && ratingSortable >= minRatingSortable;
-      }).toList();
-
-      authors.addAll(filteredDocs.map((doc) {
-        final olid = (doc['key'] as String).split('/').last;
-        final imageUrl = 'https://covers.openlibrary.org/a/olid/$olid-L.jpg';
-
-        return Author(
-          name: doc['name'] ?? 'Unknown',
-          olid: olid,
-          topWork: doc['top_work'] ?? 'Unknown',
-          birthDate: doc['birth_date'] ?? 'Unknown',
-          deathDate: doc['death_date'] ?? 'Unknown',
-          bio: '',
-          imageUrl: imageUrl,
-          ratingsSortable: 0,
-          role: 'Author',
-        );
-      }));
+    if (imageField != null &&
+        imageField is Map &&
+        imageField['asset'] != null &&
+        imageField['asset']['_ref'] != null) {
+      final ref = imageField['asset']['_ref'] as String;
+      final parts = ref.split('-');
+      if (parts.length >= 4) {
+        final imageId = parts[1];
+        final dimensions = parts[2];
+        final ext = parts[3];
+        imageUrl =
+            'https://cdn.sanity.io/images/exvg489e/production/$imageId-$dimensions.$ext';
+      }
     }
 
-    final uniqueAuthors = {for (var a in authors) a.olid: a}.values.toList();
-
-    return uniqueAuthors;
+    return Author(
+      name: doc['name'] ?? 'Unknown',
+      topWork: doc['topWork'] ?? 'Unknown',
+      birthDate: doc['birthDate'] ?? '',
+      deathDate: doc['deathDate'] ?? '',
+      bio: doc['bio'] ?? '',
+      imageUrl: imageUrl,
+      role: doc['role'] ?? 'Author',
+      ratingsSortable: (doc['ratingsSortable'] ?? 0.0).toDouble(),
+    );
   }
 }

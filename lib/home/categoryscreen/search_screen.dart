@@ -128,9 +128,8 @@ class _SearchScreenState extends State<SearchScreen> {
                             borderRadius:
                                 BorderRadius.vertical(top: Radius.circular(20)),
                           ),
-                          builder: (context) => BookDetailBottomSheet(
-                              title: book.title,
-                              bookCoverUrl: book.bookCoverUrl),
+                          builder: (context) =>
+                              BookDetailBottomSheet(title: book.title),
                         );
                       },
                       child: Container(
@@ -191,7 +190,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(6),
                               child: Image.network(
-                                book.bookCoverUrl,
+                                book.cover,
                                 width: 70,
                                 height: 100,
                                 fit: BoxFit.cover,
