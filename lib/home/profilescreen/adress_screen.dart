@@ -140,16 +140,33 @@ class _AddressScreenState extends State<AddressScreen> {
       setState(() => currAddress = newAddress);
 
       Navigator.pop(context);
-      showNotification(
-        id: 6,
-        title: "Location Updated",
-        body: "Your location was updated to: $newAddress",
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Your location was updated to: $newAddress",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     } catch (e) {
-      showNotification(
-        id: 7,
-        title: "Update Failed",
-        body: "We couldn’t update your location. Please try again.",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "We couldn’t update your location. Please try again.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppColors.CustomRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     }
   }
@@ -194,25 +211,47 @@ class _AddressScreenState extends State<AddressScreen> {
     if (currentLocation != null) {
       await _setCurrentLocationAsSelected();
 
-      showNotification(
-        id: 8,
-        title: "Location Reset",
-        body: "Your location has been reset to your current position.",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Your location has been reset to your current position.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     } else {
-      showNotification(
-        id: 9,
-        title: "Unavailable",
-        body: "Your current location is not available.",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Your current location is not available.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppColors.CustomRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     }
   }
 
   void _showError(String message) {
-    showNotification(
-      id: DateTime.now().millisecondsSinceEpoch.remainder(100000), // unique ID
-      title: "Error",
-      body: message,
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+        backgroundColor: AppColors.CustomRed,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
     );
   }
 

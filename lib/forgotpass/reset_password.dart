@@ -26,11 +26,19 @@ class _ResetPasswordState extends State<ResetPassword> {
       );
 
       if (!mounted) return;
-      showNotification(
-        id: 1,
-        title: "Email Sent",
-        body:
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
             "We've sent a reset token to your email. Please check your inbox to continue.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
 
       showDialog(
@@ -55,10 +63,18 @@ class _ResetPasswordState extends State<ResetPassword> {
       );
     } catch (e) {
       if (mounted) {
-        showNotification(
-          id: 2,
-          title: "Reset Failed",
-          body: "Could not send reset email. Please try again.",
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "Could not send reset email. Please try again.",
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: AppColors.CustomRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
       }
     } finally {

@@ -26,10 +26,16 @@ class _NewPasswordState extends State<NewPassword> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_validPassword == null || _validPassword!.isEmpty) {
-      showNotification(
-        id: 1,
-        title: "Password Required",
-        body: "Please enter a new password to reset your account.",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              const Text("Please enter a new password to reset your account."),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
       return;
     }
@@ -49,10 +55,17 @@ class _NewPasswordState extends State<NewPassword> {
       await _authService.updatePassword(_validPassword!);
 
       if (!mounted) return;
-      showNotification(
-        id: 2,
-        title: "Password Reset Successful",
-        body: "Your password has been updated.",
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Your password has been updated."),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
 
       Navigator.pushNamedAndRemoveUntil(
@@ -67,10 +80,16 @@ class _NewPasswordState extends State<NewPassword> {
       );
     } catch (e) {
       if (mounted) {
-        showNotification(
-          id: 3,
-          title: "Password Reset Failed",
-          body: "Something went wrong. Please try again.",
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("Something went wrong. Please try again."),
+            duration: const Duration(seconds: 2),
+            backgroundColor: AppColors.CustomRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
       }
     } finally {

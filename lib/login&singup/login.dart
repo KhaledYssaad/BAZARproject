@@ -27,10 +27,16 @@ class _LoginState extends State<Login> {
       await authservice.signInWithEmailPassword(email, password);
       Navigator.pushReplacementNamed(context, "/home");
     } catch (e) {
-      showNotification(
-        id: 18,
-        title: "Login Failed",
-        body: "Wrong Email or Password, try again",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Wrong Email or Password, try again"),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppColors.CustomRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     }
   }

@@ -44,10 +44,16 @@ class _SignupState extends State<Signup> {
       );
     } catch (e) {
       if (mounted) {
-        showNotification(
-          id: 17,
-          title: "Signup Failed",
-          body: "signup feild please try again ",
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("signup feild please try again "),
+            duration: const Duration(seconds: 2),
+            backgroundColor: AppColors.CustomRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
       }
     }

@@ -166,7 +166,6 @@ class AuthService {
           .getPublicUrl('public/$fileName');
       return url;
     } catch (e) {
-      debugPrint('Upload failed: $e');
       return null;
     }
   }

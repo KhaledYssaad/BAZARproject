@@ -71,16 +71,33 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
 
       cartData.add(newBook);
       await authService.updateProfile(cart: cartData);
-      showNotification(
-        id: 12,
-        title: "Book Added to Cart",
-        body: "\"$title\" has been added to your cart.",
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "\"$title\" has been added to your cart.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     } catch (e) {
-      showNotification(
-        id: 13,
-        title: "Add to Cart Failed",
-        body: "We couldn’t add \"$title\" to your cart. Please try again.",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "We couldn’t add \"$title\" to your cart. Please try again.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppColors.CustomRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     }
   }
@@ -127,19 +144,37 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
             "pic": widget.bookCoverUrl,
           });
           await authService.updateProfile(favorites: favoritesData);
-          showNotification(
-            id: 14,
-            title: "Added to Favorites",
-            body: "\"${book.title}\" has been added to your favorites.",
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "\"${book.title}\" has been added to your favorites.",
+              ),
+              duration: const Duration(seconds: 2),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           );
         }
       } else {
         favoritesData.removeWhere((f) => f['title'] == book.title);
         await authService.updateProfile(favorites: favoritesData);
-        showNotification(
-          id: 15,
-          title: "Removed from Favorites",
-          body: "\"${book.title}\" has been removed from your favorites.",
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "\"${book.title}\" has been removed from your favorites.",
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
       }
 
@@ -147,10 +182,18 @@ class _BookDetailBottomSheetState extends State<BookDetailBottomSheet> {
         isFavorite = favorite;
       });
     } catch (e) {
-      showNotification(
-        id: 16,
-        title: "Favorites Update Failed",
-        body: "We couldn’t update your favorites list. Please try again.",
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "We couldn’t update your favorites list. Please try again.",
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppColors.CustomRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
     }
   }

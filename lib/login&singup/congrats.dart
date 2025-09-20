@@ -25,10 +25,18 @@ class _CongratsState extends State<Congrats> {
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, "/home");
     } catch (e) {
-      if (mounted) {
-        showNotification(
-            id: 1, title: "Error", body: "Your Login Feild Please Try");
-      }
+      if (mounted) {}
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Your Login Feild Please Try"),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppColors.CustomRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

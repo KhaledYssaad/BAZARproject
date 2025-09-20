@@ -138,7 +138,7 @@ class _FavCartBookState extends State<FavCartBook> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 180,
+                  width: MediaQuery.of(context).size.width * 0.3,
                   child: Text(
                     title,
                     style: const TextStyle(
@@ -150,14 +150,17 @@ class _FavCartBookState extends State<FavCartBook> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  author,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primaryPurple),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  child: Text(
+                    author,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primaryPurple),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

@@ -26,7 +26,6 @@ import 'package:app/login&singup/verfication_email.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load .env before accessing env variables
   await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(

@@ -51,9 +51,14 @@ class _AccountScreenState extends State<AccountScreen> {
       final result = await _authService.pickAndUploadProfilePic();
       if (result == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No image selected"),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: const Text("No image selected"),
+            duration: const Duration(seconds: 2),
+            backgroundColor: AppColors.CustomRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
         return;
@@ -61,26 +66,21 @@ class _AccountScreenState extends State<AccountScreen> {
       setState(() {
         _profilePicUrl = result;
       });
-      showNotification(
-        id: 1,
-        title: "Profile Updated",
-        body: "Profile picture updated successfully.",
-      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Profile picture updated successfully!"),
+          SnackBar(
+            content: const Text("Profile picture updated successfully!"),
+            duration: const Duration(seconds: 2),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
     } catch (e) {
-      showNotification(
-        id: 2,
-        title: "Update Failed",
-        body: "Failed to update profile picture. Please try again.",
-      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -234,18 +234,30 @@ class _AccountScreenState extends State<AccountScreen> {
                       await _authService
                           .linkPhoneToAccount(_phoneController.text);
                     }
-                    showNotification(
-                      id: 3,
-                      title: "Profile Updated",
-                      body:
-                          "Your account details have been updated successfully.",
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("Account updated successfully"),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     );
                   } catch (e) {
                     if (!mounted) return;
-                    showNotification(
-                      id: 4,
-                      title: "Update Failed",
-                      body: "Could not update your profile. Please try again.",
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("update feild try again"),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: AppColors.CustomRed,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     );
                   }
                 },
@@ -293,11 +305,18 @@ class _AccountScreenState extends State<AccountScreen> {
                     );
                   } catch (e) {
                     if (!mounted) return;
-                    showNotification(
-                      id: 5,
-                      title: "Password Reset Failed",
-                      body:
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
                           "Could not send password reset email. Please try again.",
+                        ),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: AppColors.CustomRed,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     );
                   }
                 },
